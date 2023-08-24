@@ -1,0 +1,73 @@
+spring:
+  profiles:
+    group:
+      dev: dev
+      test: test
+      prod: prod
+
+  datasource:
+    replication:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      username: ${MYSQL_USER}
+      password: ${MYSQL_PASSWORD}
+      write-url: jdbc:mysql://${MYSQL_WRITE_HOST}:${MYSQL_WRITE_PORT}/${MYSQL_DB_NAME}
+      read-url: jdbc:mysql://${MYSQL_READ_HOST}:${MYSQL_READ_PORT}/${MYSQL_DB_NAME}
+
+    hikari:
+      maximum-pool-size: ${MYSQL_POOL_SIZE}
+
+  data:
+    jpa:
+      repositories:
+        # 유효성 검사, 빠른 로드
+        bootstrap-mode: deferred
+    redis:
+      # host:port,host:port,...
+      cluster-nodes: ${REDIS_NODES}
+      repositories:
+        # JPA Repository가 아닌 RedisTemplate을 사용하고 있기 때문
+        enabled: false
+
+  jpa:
+    properties:
+      hibernate:
+        check_nullability: true
+    open-in-view: false
+
+springdoc:
+  swagger-ui:
+    path: /docs
+    display-request-duration: true
+    groups-order: DESC
+    operationsSorter: method
+    disable-swagger-default-url: true
+    persist-authorization: true
+  show-actuator: true
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+    region:
+      static: ap-northeast-2
+    s3:
+      profile:
+        bucket: ${AWS_PROFILE_S3_BUCKET}
+    stack:
+      auto: false
+
+oauth:
+  google:
+    url: https://oauth2.googleapis.com/tokeninfo
+  kakao:
+    url: https://kapi.kakao.com/v2/user/me
+  apple:
+    keysUrl: https://appleid.apple.com/auth/keys
+
+encrypt:
+  phone-number:
+    # TODO: key, algorithm env로 바꿔야 할 듯
+    algorithm: AES
+    # AES에선 16, 24, 32바이트 길이의 secret key 필요
+    secret-key: required16length

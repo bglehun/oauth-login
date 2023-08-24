@@ -1,0 +1,41 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+    import: "optional:aws-secretsmanager:prod/api"
+
+  jpa:
+    hibernate:
+      # 엔티티와 테이블이 정상적으로 매핑 되어있는지만 확인
+      ddl-auto: validate
+
+
+logging:
+  debug: false
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+      #      orm:
+      #        jdbc:
+      #          bind: TRACE
+      springframework:
+        transaction:
+          interceptor: DEBUG
+
+oauth:
+  validate:
+    enable: ${OAUTH_VALIDATE_ENABLE}
+
+auth:
+  jwt:
+    secret: UserJWTSecretsUserJWTSecretsUserJWTSecretsUserJWTSecretsUserJWTSecretsUserJWTSecretsUserJWTSecretsUserJWTSecretsUserJWTSecretsUserJWTSecretsAdminJWTSecrets
+    admin-secret: AdminJWTSecretsAdminJWTSecretsAdminJWTSecretsAdminJWTSecretsAdminJWTSecretsAdminJWTSecretsAdminJWTSecretsAdminJWTSecretsAdminJWTSecretsAdminJWTSecrets
+    expiry: 28800000 # 8 * 60 * 60 * 1000
+    refresh-expiry: 7776000000 # 90 * 24 * 60 * 60 * 1000
+    admin-expire: 10000 # 10 * 1000
+
+
+springdoc:
+  swagger-ui:
+    enabled: false

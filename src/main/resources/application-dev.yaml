@@ -1,0 +1,47 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+    import: "optional:aws-secretsmanager:dev/api"
+
+  jpa:
+    properties:
+      hibernate:
+        # SQL 로그 개행 (가독성)
+        format_sql: true
+        # SQL 키워드에 색 표시 (가독성)
+        highlight_sql: true
+        # SQL 관련 추가적인 정보 주석 표시
+        use_sql_comments: true
+    hibernate:
+      ddl-auto: update
+
+logging:
+  debug: true
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        orm:
+          jdbc:
+            bind: TRACE
+      springframework:
+        transaction: DEBUG
+        orm:
+          jpa: DEBUG
+
+oauth:
+  validate:
+    enable: ${OAUTH_VALIDATE_ENABLE}
+
+auth:
+  jwt:
+    secret: UserJWTSecretsUserJWTSecretsUserJWTSecretsUserJWTSecretsUserJWTSecretsUserJWTSecretsUserJWTSecretsUserJWTSecretsUserJWTSecretsUserJWTSecretsAdminJWTSecrets
+    admin-secret: AdminJWTSecretsAdminJWTSecretsAdminJWTSecretsAdminJWTSecretsAdminJWTSecretsAdminJWTSecretsAdminJWTSecretsAdminJWTSecretsAdminJWTSecretsAdminJWTSecrets
+    expiry: 86400000 # 24 * 60 * 60 * 1000
+    refresh-expiry: 604800000 # 7 * 24 * 60 * 60 * 1000
+    admin-expire: 100000 # 100 * 1000
+
+springdoc:
+  swagger-ui:
+    enabled: true

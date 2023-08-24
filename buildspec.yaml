@@ -1,0 +1,31 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - aws --version
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=${COMMIT_HASH:=latest}
+      - ECR_URI=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+      - REPOSITORY_URI=$ECR_URI/${AWS_ECR_REPOSITORY}
+      - aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin $ECR_URI
+
+  build:
+    commands:
+      - docker build -t $REPOSITORY_URI:latest --build-arg ACTIVE_PROFILE=${ACTIVE_PROFILE} .
+      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
+
+  post_build:
+    commands:
+      - docker push $REPOSITORY_URI:latest
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - cat cloudformation/${ENV}/template.yaml | sed -e "s|<IMAGE_TAG>|$IMAGE_TAG|g" > cloudformation-template.yaml
+      - cat cloudformation-template.yaml
+
+cache:
+  paths:
+    - "/root/.gradle/**/*"
+
+artifacts:
+  files:
+    - cloudformation-template.yaml
